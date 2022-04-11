@@ -13,18 +13,22 @@ import (
 )
 
 var (
+	namespace  = "speedtest"
 	labelsName = []string{"country", "city"}
-	latency    = promauto.NewHistogramVec(prometheus.HistogramOpts{
-		Name: "speedtest_latency_ms",
-		Help: "The connetion latency",
+	latency    = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Name:      "latency_ms",
+		Help:      "The connetion latency",
 	}, labelsName)
-	download = promauto.NewHistogramVec(prometheus.HistogramOpts{
-		Name: "speedtest_download_mbps",
-		Help: "The connetion download speed",
+	download = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Name:      "download_mbps",
+		Help:      "The connetion download speed",
 	}, labelsName)
-	upload = promauto.NewHistogramVec(prometheus.HistogramOpts{
-		Name: "speedtest_upload_mbps",
-		Help: "The connetion upload speed",
+	upload = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Name:      "upload_mbps",
+		Help:      "The connetion upload speed",
 	}, labelsName)
 )
 
@@ -41,9 +45,9 @@ func recordMetrics() {
 		s.UploadTest(false)
 
 		// Register value to metrics
-		latency.WithLabelValues(s.Country, s.Name).Observe(float64(s.Latency.Milliseconds()))
-		download.WithLabelValues(s.Country, s.Name).Observe(s.DLSpeed)
-		upload.WithLabelValues(s.Country, s.Name).Observe(s.ULSpeed)
+		latency.WithLabelValues(s.Country, s.Name).Set(float64(s.Latency.Milliseconds()))
+		download.WithLabelValues(s.Country, s.Name).Set(s.DLSpeed)
+		upload.WithLabelValues(s.Country, s.Name).Set(s.ULSpeed)
 	}
 
 	log.Println("Speedtest done !")
