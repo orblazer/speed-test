@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -29,7 +29,7 @@ var (
 )
 
 func recordMetrics() {
-	fmt.Println("Running speed test...")
+	log.Println("Running speed test...")
 
 	user, _ := speedtest.FetchUserInfo()
 	serverList, _ := speedtest.FetchServers(user)
@@ -46,7 +46,7 @@ func recordMetrics() {
 		upload.WithLabelValues(s.Country, s.Name).Observe(s.ULSpeed)
 	}
 
-	fmt.Println("Speedtest done !")
+	log.Println("Speedtest done !")
 }
 
 func main() {
@@ -58,7 +58,7 @@ func main() {
 	c.Start()
 
 	// Handle server
-	fmt.Println("Server started on 0.0.0:2112 !")
+	log.Println("Server started on 0.0.0:2112 !")
 	http.Handle("/metrics", promhttp.Handler())
 	http.ListenAndServe(":2112", nil)
 
